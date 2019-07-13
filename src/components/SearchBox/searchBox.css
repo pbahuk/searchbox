@@ -1,0 +1,26 @@
+* {
+  box-sizing: border-box;
+}
+
+.executive {}
+
+input {
+  border: 1px solid transparent;
+  background-color: #f1f1f1;
+  padding: 10px;
+  font-size: 16px;
+  width: 100%;
+  outline: 0;
+}
+
+input[type=text] {
+  background-color: #f1f1f1;
+  margin: 0px 0px 20px 0px;
+  position: relative;
+}
+
+input[type=submit] {
+  margin: 10px 0px;
+  background-color: DodgerBlue;
+  color: #fff;
+}
