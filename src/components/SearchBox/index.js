@@ -22,10 +22,10 @@ class SearchBox extends React.Component {
       this[method] = this[method].bind(this);
     });
     this.effiecientFetch = debounce(fetchResults, 500);
-    this.refs = React.createRef();
 
     this.state = {
       searchText: "",
+      loading: false,
       error: "",
       results: [],
       cursor: undefined
@@ -36,6 +36,7 @@ class SearchBox extends React.Component {
     const { primary, secondary } = response;
 
     this.setState({
+      loading: false,
       results: [...primary, ...secondary]
     });
   }
@@ -49,27 +50,19 @@ class SearchBox extends React.Component {
 
   handleKeyDown(event) {
     const { cursor, results } = this.state;
+    let index = cursor;
 
     if (event.keyCode === 38 && cursor > 0) {
-      this.setState(prevState => ({
-        cursor: prevState.cursor - 1
-      }));
+      index = cursor - 1;
     } else if (event.keyCode === 40 && cursor < results.length - 1) {
-      this.setState(prevState => ({
-        cursor: prevState.cursor + 1
-      }));
+      index = cursor + 1;
     } else if (event.keyCode === 40 && cursor === undefined) {
-      this.setState({
-        cursor: 0
-      });
+      index = 0;
     }
 
-    // Ref logic to be fixed.
-    console.log("REFSSSSS", this.refs, this.state.cursor);
-    // this.refs[cursor].scrollIntoView({
-    //   block: "end",
-    //   behavior: "smooth"
-    // });
+    if (index !== cursor) {
+      this.changeActiveResult(index);
+    }
   }
 
   changeActiveResult(index) {
@@ -82,6 +75,7 @@ class SearchBox extends React.Component {
     const value = event.target.value;
     this.setState(
       {
+        loading: true,
         searchText: event.target.value
       },
       () => {
@@ -105,6 +99,7 @@ class SearchBox extends React.Component {
         {searchText.length > 0 && (
           <Results
             data={this.state.data}
+            loading={this.state.loading}
             results={results}
             ref={this.refs}
             active={this.state.cursor}

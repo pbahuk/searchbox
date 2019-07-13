@@ -4,9 +4,6 @@ import Styles from "./results.css";
 class Results extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      cursor: 0
-    };
     this.refs = React.createRef();
 
     ["renderResults", "handleFocus"].forEach(
@@ -14,9 +11,22 @@ class Results extends React.Component {
     );
   }
 
+  componentWillReceiveProps(nextProps) {
+    console.log(this.props.active, nextProps.active);
+    if (this.props.active !== nextProps.active) {
+      this.refs[nextProps.active].scrollIntoView({
+        block: "end",
+        behavior: "smooth"
+      });
+    }
+  }
+
   handleFocus(event) {
     const target = event.target;
-    const index = Number(target.dataset.index);
+    let index = Number(target.dataset.index);
+    if (Number.isNaN(index)) {
+      index = Number(target.parentNode.dataset.index);
+    }
 
     this.props.changeActiveResult(index);
   }
@@ -35,7 +45,7 @@ class Results extends React.Component {
   }
 
   render() {
-    const { active, results } = this.props;
+    const { active, results, loading } = this.props;
 
     if (results.length) {
       return (
@@ -60,6 +70,8 @@ class Results extends React.Component {
           })}
         </div>
       );
+    } else if (loading) {
+      return <div className={Styles.noresults}>Loading...</div>;
     } else {
       return <div className={Styles.noresults}>No User found</div>;
     }
